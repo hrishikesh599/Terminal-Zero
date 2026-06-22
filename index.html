@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>TERMINAL ZERO — VANTA PROTOCOL</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Share+Tech+Mono&family=VT323&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div id="app">
+
+<div id="screen-cinematic" class="screen">
+  <canvas id="cin-canvas"></canvas>
+  <div id="cin-ui">
+    <div id="cin-tagbar">
+      <span id="cin-tag"></span>
+      <span id="cin-ts"></span>
+    </div>
+    <div id="cin-art-area"></div>
+    <div id="cin-dialog">
+      <div id="cin-spk-row">
+        <div id="cin-avatar"></div>
+        <span id="cin-spk-name"></span>
+      </div>
+      <div id="cin-msg"></div>
+      <span id="cin-cur">▌</span>
+      <div id="cin-continue-hint">[ CLICK / TAP TO CONTINUE ]</div>
+    </div>
+    <div id="cin-footer">
+      <div id="cin-dots"></div>
+      <button id="cin-skip" onclick="skipCinematic()">SKIP ▶▶</button>
+    </div>
+  </div>
+</div>
+
+<div id="screen-menu" class="screen hidden">
+  <canvas id="menu-canvas"></canvas>
+  <div id="menu-ui">
+    <div id="menu-header">
+      <div id="menu-eyebrow">// GHOST CELL — CLASSIFIED UPLINK //</div>
+      <h1 id="menu-logo">TERMINAL ZERO</h1>
+      <div id="menu-sub">VANTA PROTOCOL</div>
+      <div id="menu-status">
+        <span id="menu-status-dot"></span>
+        <span id="menu-status-txt">NEXUS GRID: 47% COMPROMISED — THREAT LEVEL: CRITICAL</span>
+      </div>
+    </div>
+
+    <nav id="menu-nav">
+      <button class="mnav primary" onclick="showDifficultySelect()">
+        <span class="mico">⚡</span><span class="mlbl">INITIALIZE MISSION</span>
+      </button>
+      <button class="mnav" onclick="openDossier()">
+        <span class="mico">📂</span><span class="mlbl">CASE DOSSIER</span>
+        <span class="mbadge" id="badge-files">0 FILES</span>
+      </button>
+      <button class="mnav" onclick="openAchievements()">
+        <span class="mico">🏆</span><span class="mlbl">ACHIEVEMENTS</span>
+        <span class="mbadge" id="badge-ach">0 / 16</span>
+      </button>
+      <button class="mnav" onclick="showCinematic(true)">
+        <span class="mico">📺</span><span class="mlbl">REPLAY BRIEFING</span>
+      </button>
+      <button class="mnav" onclick="showScreen('howto')">
+        <span class="mico">❓</span><span class="mlbl">OPERATIVE MANUAL</span>
+      </button>
+    </nav>
+
+    <div id="menu-footer">
+      <span id="mf-best">BEST: 0</span>
+      <span class="mf-div">|</span>
+      <span id="mf-files">FILES: 0/12</span>
+      <span class="mf-div">|</span>
+      <span id="mf-ch">CHAPTER: AWAKENING</span>
+      <span class="mf-div">|</span>
+      <span id="mf-ach">ACH: 0/16</span>
+    </div>
+  </div>
+</div>
+
+<div id="screen-difficulty" class="screen hidden">
+  <div class="modal wide">
+    <div class="modal-hdr">
+      <span class="modal-title">// SELECT CLEARANCE LEVEL //</span>
+      <button class="xbtn" onclick="showScreen('menu')">✕</button>
+    </div>
+    <div id="diff-cards">
+      <div class="dcard" onclick="pickDiff('easy',this)">
+        <div class="dc-ico">🔵</div>
+        <div class="dc-rank">ANALYST</div>
+        <div class="dc-sub">Entry-level operative</div>
+        <ul class="dc-list">
+          <li>Speed <b class="v-cyan">SLOW</b></li>
+          <li>Lives <b>5</b></li>
+          <li>Threats <b class="v-cyan">PROBES</b></li>
+          <li>Score Mult <b>×0.8</b></li>
+        </ul>
+      </div>
+      <div class="dcard sel" onclick="pickDiff('normal',this)">
+        <div class="dc-rec">RECOMMENDED</div>
+        <div class="dc-ico">🟡</div>
+        <div class="dc-rank">OPERATIVE</div>
+        <div class="dc-sub">Field agent</div>
+        <ul class="dc-list">
+          <li>Speed <b class="v-yellow">NORMAL</b></li>
+          <li>Lives <b>3</b></li>
+          <li>Threats <b class="v-yellow">ALL CLASSES</b></li>
+          <li>Score Mult <b>×1.0</b></li>
+        </ul>
+      </div>
+      <div class="dcard" onclick="pickDiff('hard',this)">
+        <div class="dc-ico">🔴</div>
+        <div class="dc-rank">GHOST</div>
+        <div class="dc-sub">Elite clearance required</div>
+        <ul class="dc-list">
+          <li>Speed <b class="v-red">EXTREME</b></li>
+          <li>Lives <b>1</b></li>
+          <li>Threats <b class="v-red">VANTA-CLASS</b></li>
+          <li>Score Mult <b class="v-red">×1.5</b></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="screen-howto" class="screen hidden">
+  <div class="modal">
+    <div class="modal-hdr">
+      <span class="modal-title">// OPERATIVE MANUAL //</span>
+      <button class="xbtn" onclick="showScreen('menu')">✕</button>
+    </div>
+    <div class="howto-scroll">
+      <div class="hs"><h4>MISSION</h4><p>VANTA malware descends from above. Type the intercepted strings to neutralize each threat before it breaches the firewall at the bottom. Each breach costs one agent life.</p></div>
+      <div class="hs"><h4>CONTROLS</h4>
+        <div class="keygrid">
+          <kbd>TYPE</kbd><span>Auto-locks and destroys nearest matching threat</span>
+          <kbd>TAB</kbd><span>Abort current target lock</span>
+          <kbd>ESC</kbd><span>Pause / Resume the game</span>
+          <kbd>SPACE</kbd><span>Activate special ability when charge bar is full</span>
+        </div>
+      </div>
+      <div class="hs"><h4>ABILITY SYSTEM</h4><p>Destroy threats rapidly to charge your ABILITY bar. When full (100%), press SPACE to unleash your equipped perk's special power. Each perk gives a unique active ability.</p></div>
+      <div class="hs"><h4>ACCURACY STREAK</h4><p>Destroy words with zero errors to build your STREAK. At 10, 25, and 50 you earn a COMMENDATION and a permanent score multiplier. Any missed word resets the streak.</p></div>
+      <div class="hs"><h4>THREAT CLASSES</h4>
+        <div class="tclist">
+          <div><span class="tb green">PROBE</span><span>1–4 chars — fast to neutralize</span></div>
+          <div><span class="tb cyan">EXPLOIT</span><span>5–7 chars — standard threat</span></div>
+          <div><span class="tb yellow">PAYLOAD</span><span>8–10 chars — high damage</span></div>
+          <div><span class="tb red">VANTA-CLASS</span><span>11+ chars — critical</span></div>
+          <div><span class="tb orange">BOSS</span><span>Named entities — maximum danger</span></div>
+        </div>
+      </div>
+      <div class="hs"><h4>TARGETING BEAM</h4><p>A targeting reticle and beam connect your terminal to the locked word. Watch it — it shows exactly what you are neutralizing even when the arena is crowded.</p></div>
+      <div class="hs"><h4>CHAPTER PROGRESSION</h4><p>Every 3 waves a new chapter unlocks. Arena colors, threat skins, and ORACLE briefings change with the story. Intercept messages pause the game between chapters. Check the DOSSIER to read all unlocked intel files.</p></div>
+    </div>
+    <button class="btn-launch sm" onclick="showScreen('menu')">← BACK</button>
+  </div>
+</div>
+
+<div id="screen-dossier" class="screen hidden">
+  <div id="dossier-shell">
+    <div id="dossier-topbar">
+      <div>
+        <div id="dossier-title">// GHOST CELL — CASE DOSSIER //</div>
+        <div id="dossier-sub">OPERATION: TERMINAL ZERO — CLASSIFIED INTELLIGENCE</div>
+      </div>
+      <button class="xbtn" onclick="showScreen('menu')">✕</button>
+    </div>
+    <div id="dossier-body">
+      <div id="dossier-list"></div>
+      <div id="dossier-reader">
+        <div id="dossier-empty">
+          <div class="de-ico">📂</div>
+          <p>Select a file from the list.</p>
+          <p class="de-sub">Classified files unlock as you survive waves.</p>
+        </div>
+        <div id="dossier-content" class="hidden"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="screen-achievements" class="screen hidden">
+  <div id="ach-shell">
+    <div id="ach-topbar">
+      <div>
+        <div id="ach-title">// GHOST CELL COMMENDATIONS //</div>
+        <div id="ach-sub" ></div>
+      </div>
+      <button class="xbtn" onclick="showScreen('menu')">✕</button>
+    </div>
+    <div id="ach-grid"></div>
+  </div>
+</div>
+
+<div id="screen-game" class="screen hidden">
+
+
+  <div id="ch-strip">
+    <span id="cs-label">CHAPTER 1</span>
+    <span id="cs-sep">|</span>
+    <span id="cs-name">AWAKENING</span>
+    <span id="cs-desc">VANTA initial reconnaissance detected</span>
+  </div>
+
+  <div id="hud">
+    <div class="hb"><span class="hl">LVL</span><span class="hv green" id="h-level">1</span></div>
+    <div class="hb"><span class="hl">WAVE</span><span class="hv" id="h-wave">1</span></div>
+    <div class="hb"><span class="hl">WPM</span><span class="hv c2" id="h-wpm">0</span></div>
+    <div class="hb"><span class="hl">ACC</span><span class="hv" id="h-acc">100%</span></div>
+    <div class="hb"><span class="hl">COMBO</span><span class="hv purple" id="h-combo">×1</span></div>
+    <div class="hb lives-hb"><span class="hl">AGENTS</span><div id="lives-pips"></div></div>
+    <div class="hb score-hb"><span class="hl">INTEL</span><span class="hv yellow" id="h-score">0</span></div>
+    <div class="hb ab-hb" id="ab-hb">
+      <span class="hl">ABILITY</span>
+      <div id="ab-track"><div id="ab-fill"></div></div>
+      <span id="ab-name" class="hl">—</span>
+    </div>
+    <button id="pause-btn" onclick="togglePause()" title="ESC">⏸</button>
+  </div>
+
+  <div id="arena">
+    <canvas id="arena-canvas"></canvas>
+    <canvas id="beam-canvas"></canvas>
+    <div id="ch-flash"></div>
+    <div id="wave-banner"></div>
+    <div id="streak-bar">
+      <span class="sk-lbl">STREAK</span>
+      <div id="sk-track"><div id="sk-fill"></div></div>
+      <span id="sk-num">0</span>
+    </div>
+    
+    <div id="fw-bar"><div id="fw-fill"></div></div>
+  </div>
+
+  
+  <div id="oracle-panel" class="hidden">
+    <div id="oracle-hdr">⬡ ORACLE</div>
+    <div id="oracle-msg"></div>
+    <button id="oracle-x" onclick="dismissOracle()">✕</button>
+  </div>
+
+  
+  <div id="input-row">
+    <span id="input-prompt">root@terminal-zero:~$</span>
+    <input id="type-input" type="text" autocomplete="off" autocorrect="off"
+           autocapitalize="off" spellcheck="false" placeholder="neutralize threat…">
+    <span id="input-status">READY</span>
+  </div>
+
+  
+  <svg id="combo-ring" viewBox="0 0 52 52">
+    <circle class="cr-bg" cx="26" cy="26" r="20"/>
+    <circle class="cr-fill" id="cr-fill" cx="26" cy="26" r="20"/>
+    <text class="cr-txt" x="26" y="26" id="cr-txt">×1</text>
+  </svg>
+
+  
+  <div id="ab-ready" class="hidden">⚡ ABILITY READY — PRESS SPACE</div>
+
+ 
+  <div id="unlock-toast" class="hidden">
+    <span class="ut-ico">📂</span>
+    <div><div id="ut-code">—</div><div id="ut-name"></div></div>
+  </div>
+
+</div>
+
+
+<div id="screen-intercept" class="screen hidden">
+  <canvas id="ic-canvas"></canvas>
+  <div id="ic-ui">
+    <div id="ic-topbar">
+      <span id="ic-label">// INTERCEPTED TRANSMISSION //</span>
+      <span id="ic-ts"></span>
+    </div>
+    <div id="ic-from"></div>
+    <div id="ic-body-wrap"><pre id="ic-body"></pre></div>
+    <div id="ic-hint">[ ANY KEY OR CLICK TO RESUME DEFENSE ]</div>
+  </div>
+</div>
+
+
+<div id="screen-boss" class="screen hidden">
+  <canvas id="boss-canvas"></canvas>
+  <div id="boss-ui">
+    <div id="boss-warn">⚠ CRITICAL THREAT DETECTED ⚠</div>
+    <div id="boss-name"></div>
+    <div id="boss-class"></div>
+    <div id="boss-lore"></div>
+    <button class="btn-launch sm" id="boss-engage-btn">ENGAGE ▸</button>
+  </div>
+</div>
+
+
+<div id="screen-levelup" class="screen hidden">
+  <div class="modal lu-modal">
+    <div id="lu-eyebrow">// ORACLE — COUNTERMEASURE AVAILABLE //</div>
+    <div id="lu-chapter-lbl"></div>
+    <div id="lu-title"></div>
+    <div id="lu-oracle-box"><span id="lu-oracle"></span></div>
+    <div id="perk-grid"></div>
+  </div>
+</div>
+
+
+<div id="screen-pause" class="screen hidden">
+  <div class="modal">
+    <div class="ov-eyebrow">// DEFENSE SUSPENDED //</div>
+    <div class="ov-title cyan">PAUSED</div>
+    <div class="stat-grid" id="pause-stats"></div>
+    <button class="ov-btn primary" onclick="resumeGame()">▶ RESUME DEFENSE</button>
+    <button class="ov-btn secondary" onclick="showMainMenu()">MAIN TERMINAL</button>
+  </div>
+</div>
+
+
+<div id="screen-over" class="screen hidden">
+  <div class="modal over-modal">
+    <div class="ov-eyebrow" id="ov-eyebrow">// MISSION DEBRIEF //</div>
+    <div class="ov-title red" id="ov-title">TERMINAL BREACH</div>
+    <div id="ov-sub"></div>
+    <div class="stat-grid" id="over-stats"></div>
+    <div id="over-vanta"></div>
+    <div id="over-files"></div>
+    <button class="ov-btn primary" onclick="startGame()">REBOOT SYSTEM</button>
+    <button class="ov-btn secondary" onclick="showMainMenu()">MAIN TERMINAL</button>
+  </div>
+</div>
+
+<div id="ach-popup" class="hidden">
+  <div id="ap-ico">🏆</div>
+  <div><div id="ap-label">ACHIEVEMENT UNLOCKED</div><div id="ap-name"></div></div>
+</div>
+
+</div><!-- #app -->
+<script src="script.js"></script>
+</body>
+</html>
